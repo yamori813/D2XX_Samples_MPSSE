@@ -11,6 +11,7 @@
 
 #define     NUM     5
 int         tbl[NUM];
+char pin[NUM][6] = {"TCK", "TDI", "TDO", "TMS", "nTRST"};
 
 #define TCK     (1 << tbl[0])
 #define TDI     (1 << tbl[1])
@@ -19,12 +20,20 @@ int         tbl[NUM];
 
 #define nTRST   (1 << tbl[4])
 
+int find;
+
 // Globals
 FT_HANDLE ftHandle = NULL;
 
 #define SLEEPTIME  (100) /* msec */
 
 int irchainlen;
+
+void  list()
+{   int     i;
+    for(i=0; i<NUM; i++)  printf("%d:%s ", tbl[i], pin[i]);
+    printf("\n");
+}
 
 int
 check_wiggler(void)
@@ -178,8 +187,11 @@ detect(void)
           j++;
           if (j == 32)
             {
-				if(cdr != 0xffffffff)
-              printf("IDCODE: chain -%d, %08x\n", chain, cdr);
+              if(cdr != 0xffffffff) {
+                list();
+                printf("IDCODE: chain -%d, %08x\n", chain, cdr);
+                find = 1;
+              }
               if ((cdr & 0xff) == 1)
                 {
 //                  printf("Invalid IDCODE. No more chains.\n");
@@ -235,7 +247,7 @@ idcode(void)
   int cdr;
   ir(IDCODE, 4);
   cdr = dr(0, 32);
-//  printf("IDCODE=%08x\n", cdr);
+  printf("IDCODE=%08x\n", cdr);
 }
 
 void
@@ -255,13 +267,14 @@ scan()
       fprintf(stderr, "Wiggler cable is not detected\n");
       exit(1);
     }
+  find = 0;
   reset();
   detect();
-	/*
-  irlen();
-  idcode();
-  impcode();
-	 */
+  if (find) {
+    irlen();
+//    idcode();
+//    impcode();
+  }
   if(ftHandle != NULL) {
     FT_SetBitMode(ftHandle, 0x00, 0x00);
     FT_Close(ftHandle);
@@ -269,18 +282,11 @@ scan()
   }
 }
 
-void  list()
-{   int     i;
-    for(i=0; i<NUM; i++)  printf("%d ",tbl[i]);
-    printf("\n");
-	scan();
-}
-
 void  jyun(int t[], int n)
 {   int     i,k,w;
 
     if (n<2)
-    {   list();
+    {   scan();
         return;
     }
     k= n-1;
