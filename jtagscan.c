@@ -161,6 +161,8 @@ reset(void)
   wiggle(0, 0);// printf("Run-Test/Idle\n");
 }
 
+int firstcdr;
+
 void
 detect(void)
 {
@@ -187,16 +189,14 @@ detect(void)
           j++;
           if (j == 32)
             {
-              if(cdr != 0xffffffff) {
+              if(chain == 1 && cdr == 0x00000001) {
                 list();
-                printf("IDCODE: chain -%d, %08x\n", chain, cdr);
+                printf("IDCODE: chain -%d, %08x\n", 0, firstcdr);
                 find = 1;
+                break;
               }
-              if ((cdr & 0xff) == 1)
-                {
-//                  printf("Invalid IDCODE. No more chains.\n");
-                  break;
-                }
+              if (chain == 0)
+                firstcdr = cdr;
               j = 0;
               cdr = 0;
               chain++;
@@ -305,6 +305,7 @@ void  jyun(int t[], int n)
 int  main()
 {   int     i;
 
+	printf("Scan Start\n");
     for(i=0; i<NUM; i++)    tbl[i]= i;
     jyun(tbl,NUM);
 
