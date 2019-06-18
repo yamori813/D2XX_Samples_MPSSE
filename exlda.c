@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 	int startaddr, endaddr;
 	int sum;
 
-	if(argc != 1) {
+	if(argc != 2) {
 		printf("Usage: exlda <bin file>\n");
 		exit(-1);
 	}
