@@ -1,6 +1,7 @@
 /*
   This is data transfer program for EX-80.
   H.M 2019.06.18
+  FT:TXD -> EX:RXC(EXC), FT:RXD -> EX:RXD
 */
 
 #include <stdio.h>
