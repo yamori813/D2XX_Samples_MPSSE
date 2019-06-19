@@ -1,13 +1,16 @@
 /*
   This is data transfer program for EX-80.
   H.M 2019.06.18
-  FT:TXD -> EX:RXC(EXC), FT:RXD -> EX:RXD
+  use RXD and EXC bit by bitbang
 */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
 #include "ftd2xx.h"
+
+#define RXD	(1 << 5)
+#define EXC	(1 << 6)
 
 // Globals
 FT_HANDLE ftHandle = NULL;
@@ -31,18 +34,18 @@ int addbyte(int ch, unsigned char *buf)
 	count = 0;
 	// start bit
 	buf[count++] = 0x00;
-	buf[count++] = 0x01;
+	buf[count++] = EXC;
 	
 	for(i = 0; i < 8; ++i) {
 		bit = (ch >> i) & 1;
-		buf[count++] = 0x00 | (bit << 1);
-		buf[count++] = 0x01 | (bit << 1);
+		buf[count++] = 0x00 | (bit ? RXD : 0);
+		buf[count++] = EXC | (bit ? RXD : 0);
 	}
 	// stop bit
-	buf[count++] = 0x00 | (1 << 1);
-	buf[count++] = 0x01 | (1 << 1);
-	buf[count++] = 0x00 | (1 << 1);
-	buf[count++] = 0x01 | (1 << 1);
+	buf[count++] = 0x00 | RXD;
+	buf[count++] = EXC | RXD;
+	buf[count++] = 0x00 | RXD;
+	buf[count++] = EXC | RXD;
 	
 	return count;
 }
@@ -86,7 +89,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	ftStatus = FT_SetBitMode(ftHandle, 0x03, 0x01);
+	ftStatus = FT_SetBitMode(ftHandle, RXD | EXC, 0x01);
 	if(ftStatus != FT_OK) {
 		printf("Failed to set Asynchronous Bit bang Mode");
 	}
@@ -104,8 +107,8 @@ int main(int argc, char *argv[])
 		buffCount = 0;
 		// start
 		for(i = 0; i < 1024; ++i) {
-			outBuffer[buffCount++] = 0x00 | (1 << 1);
-			outBuffer[buffCount++] = 0x01 | (1 << 1);
+			outBuffer[buffCount++] = 0x00 | RXD;
+			outBuffer[buffCount++] = EXC | RXD;
 		}
 		ftStatus = FT_Write(ftHandle, outBuffer, buffCount, &dwBytesInQueue);
 	}
@@ -131,8 +134,8 @@ int main(int argc, char *argv[])
 	buffCount += addbyte(sum, &outBuffer[buffCount]);
 
 	for(i = 0; i < 128; ++i) {
-		outBuffer[buffCount++] = 0x00 | (1 << 1);
-		outBuffer[buffCount++] = 0x01 | (1 << 1);
+		outBuffer[buffCount++] = 0x00 | RXD;
+		outBuffer[buffCount++] = EXC | RXD;
 	}
 
 	ftStatus = FT_Write(ftHandle, outBuffer, buffCount, &dwBytesInQueue);
