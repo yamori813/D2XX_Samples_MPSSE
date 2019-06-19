@@ -73,6 +73,10 @@ int main(int argc, char *argv[])
 	}
 
 	binFile = fopen(argv[1], "rb");
+	if (binFile == NULL) {
+		printf("Can't open file\n");
+		exit(-1);
+	}
 	binsize = fread(&binbuff, 1, sizeof(binbuff), binFile);
 	fclose(binFile);
 
