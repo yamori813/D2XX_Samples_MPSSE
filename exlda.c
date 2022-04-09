@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 	unsigned char ucMode = 0x00;
 	int iport;
 	int buffCount;
-	BYTE outBuffer[1024*32];
+	BYTE outBuffer[1024*16*32];
 	int loopCount;
 	FILE *binFile;
 	BYTE binbuff[1024*2];
@@ -102,12 +102,12 @@ int main(int argc, char *argv[])
 	if(ftStatus != FT_OK) {
 		printf("Failed to FT_Purge\n");	
 	}
-	ftStatus = FT_SetBaudRate(ftHandle, 300);
+	ftStatus = FT_SetBaudRate(ftHandle, 4800);
 	if(ftStatus != FT_OK) {
 		printf("Failed to FT_SetBaudRate\n");	
 	}
 	usleep(1000*200);
-	for(j = 0; j < 2; ++j) {
+	for(j = 0; j < 4; ++j) {
 		buffCount = 0;
 		// start
 		for(i = 0; i < 1024; ++i) {
@@ -146,7 +146,8 @@ int main(int argc, char *argv[])
 	if(ftStatus != FT_OK) {
 		printf("Failed to FT_Write\n");	
 	} else {
-		printf("FT_Write dwBytesInQueue = %d\n",dwBytesInQueue);
+//		printf("FT_Write dwBytesInQueue = %d\n",dwBytesInQueue);
+		printf("send %d bytes\n", binsize);
 	}
 	usleep(1000*100);
 
