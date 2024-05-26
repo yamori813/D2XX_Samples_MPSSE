@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 	BYTE outBuffer[1024*16*32];
 	int loopCount;
 	FILE *binFile;
-	BYTE binbuff[1024*2];
+	BYTE binbuff[1024*4];
 	int binsize;
 	int startaddr, endaddr;
 	int sum;
