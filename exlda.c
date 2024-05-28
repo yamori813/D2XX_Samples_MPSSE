@@ -7,10 +7,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <unistd.h>
 #include "ftd2xx.h"
 
 #define RXD	(1 << 5)
 #define EXC	(1 << 6)
+
+#define	MAXMEM	(16 * 1024)	// byte
 
 // Globals
 FT_HANDLE ftHandle = NULL;
@@ -59,10 +62,10 @@ int main(int argc, char *argv[])
 	unsigned char ucMode = 0x00;
 	int iport;
 	int buffCount;
-	BYTE outBuffer[1024*16*32];
+	BYTE outBuffer[MAXMEM*32];
 	int loopCount;
 	FILE *binFile;
-	BYTE binbuff[1024*4];
+	BYTE binbuff[MAXMEM];
 	int binsize;
 	int startaddr, endaddr;
 	int sum;
