@@ -6,7 +6,7 @@
 FT_DXX_LIB=../FT_D2XX_Lib.1.2.2/D2XX/bin/10.5-10.7
 FT_DXX_INC=../FT_D2XX_Lib.1.2.2/D2XX/Samples
 
-OBJ = mpsse bitbang jtagtest pracc wrt54g spireadid hjtag jtagscan exlda
+OBJ = mpsse bitbang jtagtest pracc wrt54g spireadid hjtag jtagscan exlda exkey
 
 all: $(OBJ)
 
@@ -18,6 +18,9 @@ bitbang: bitbang.c libftd2xx.dylib
 
 exlda: exlda.c libftd2xx.dylib
 	gcc -o exlda exlda.c -I$(FT_DXX_INC) -L. -lftd2xx 
+
+exkey: exkey.c libftd2xx.dylib
+	gcc -o exkey exkey.c -I$(FT_DXX_INC) -L. -lftd2xx 
 
 jtagtest: jtagtest.c libftd2xx.dylib
 	gcc -o jtagtest jtagtest.c -DFT2232 -I$(FT_DXX_INC) -L. -lftd2xx 
