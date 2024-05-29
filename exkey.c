@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 	FT_STATUS	ftStatus;
 	int iport;
 	int buffCount;
-	BYTE outBuffer[1024*16*32];
+	BYTE outBuffer[32];
 	int ch;
 	struct termios settings;
 
@@ -104,9 +104,7 @@ int main(int argc, char *argv[])
 		ch = getchar();
 
 		if(ch != EOF) {
-			buffCount = 0;
-
-			buffCount += addbyte(ch, &outBuffer[buffCount]);
+			buffCount = addbyte(ch, outBuffer);
 
 			ftStatus = FT_Write(ftHandle, outBuffer, buffCount,
 			    &dwBytesInQueue);
